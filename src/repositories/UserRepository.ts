@@ -1,6 +1,6 @@
 import { UserEntity } from '../entities';
 import users from '../mock/users';
-import type IUserRepository from '../services/interfaces/IUserRepository';
+import type IUserRepository from '../services/repositories/IUserRepository';
 
 type UserProperties = {
   id: string;

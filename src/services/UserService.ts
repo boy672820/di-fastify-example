@@ -1,6 +1,6 @@
 import { UserEntity } from '../entities';
 import { UserRepository } from '../repositories';
-import type IUserRepository from './interfaces/IUserRepository';
+import type IUserRepository from './repositories/IUserRepository';
 
 export default class UserService {
   private readonly userRepository: IUserRepository;
