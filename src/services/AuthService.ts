@@ -20,7 +20,7 @@ export default class AuthService {
         ...claim,
         sub: claim.id,
         iss: 'di-fastify@example.com',
-        exp: Math.floor(Date.now() / 1000) + 60 * 60,
+        exp: Math.floor(Date.now() / 1000) + 60 * 60, // 1 hour
       })
     ).toString('base64');
 }
