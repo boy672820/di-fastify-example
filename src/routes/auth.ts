@@ -1,11 +1,11 @@
 import { FastifyPluginAsync } from 'fastify';
 import UserService from '../services/UserService';
 import AuthService from '../services/AuthService';
-import { UserRepository } from '../repositories';
+import Container from 'typedi';
 
 const auth: FastifyPluginAsync = async (fastify, _opts): Promise<void> => {
-  const userService = new UserService(new UserRepository());
-  const authService = new AuthService(new UserRepository());
+  const userService = Container.get(UserService);
+  const authService = Container.get(AuthService);
 
   fastify.post<{
     Body: {

@@ -1,4 +1,6 @@
-import IUserRepository from './repositories/IUserRepository';
+import { Inject, Service } from 'typedi';
+import { UserRepository } from '../repositories';
+import type IUserRepository from './repositories/IUserRepository';
 
 type Claim = {
   id: string;
@@ -6,8 +8,12 @@ type Claim = {
   role: string;
 };
 
+@Service()
 export default class AuthService {
-  constructor(private readonly _userRepository: IUserRepository) {}
+  constructor(
+    @Inject(() => UserRepository)
+    private readonly _userRepository: IUserRepository
+  ) {}
 
   verifyPassword(password: string, userPassword: string) {
     return password === userPassword;

@@ -1,9 +1,14 @@
+import { Inject, Service } from 'typedi';
 import { UserEntity } from '../entities';
 import { UserRepository } from '../repositories';
 import type IUserRepository from './repositories/IUserRepository';
 
+@Service()
 export default class UserService {
-  constructor(private readonly userRepository: IUserRepository) {}
+  constructor(
+    @Inject(() => UserRepository)
+    private readonly userRepository: IUserRepository
+  ) {}
 
   async getUsers() {
     const users = await this.userRepository.findMany();

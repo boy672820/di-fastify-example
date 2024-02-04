@@ -1,3 +1,4 @@
+import { Service } from 'typedi';
 import { UserEntity } from '../entities';
 import users from '../mock/users';
 import type IUserRepository from '../services/repositories/IUserRepository';
@@ -9,6 +10,7 @@ type UserProperties = {
   password: string;
 };
 
+@Service()
 export default class UserRepository implements IUserRepository {
   async findMany(): Promise<UserEntity[]> {
     return users.reduce<UserEntity[]>(

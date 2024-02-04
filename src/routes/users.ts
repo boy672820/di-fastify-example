@@ -1,10 +1,10 @@
 import { FastifyPluginAsync } from 'fastify';
 import UserService from '../services/UserService';
 import { UserEntity } from '../entities';
-import { UserRepository } from '../repositories';
+import Container from 'typedi';
 
 const users: FastifyPluginAsync = async (fastify, _opts): Promise<void> => {
-  const userService = new UserService(new UserRepository());
+  const userService = Container.get(UserService);
 
   fastify.get('/users', async function (_request, _reply) {
     const entities = await userService.getUsers();
