@@ -3,11 +3,7 @@ import { UserRepository } from '../repositories';
 import type IUserRepository from './repositories/IUserRepository';
 
 export default class UserService {
-  private readonly userRepository: IUserRepository;
-
-  constructor() {
-    this.userRepository = new UserRepository();
-  }
+  constructor(private readonly userRepository: IUserRepository) {}
 
   async getUsers() {
     const users = await this.userRepository.findMany();
@@ -16,6 +12,11 @@ export default class UserService {
 
   async getUser(id: string) {
     const user = await this.userRepository.findById(id);
+    return user;
+  }
+
+  async getUserByEmail(email: string) {
+    const user = await this.userRepository.findOne({ email });
     return user;
   }
 

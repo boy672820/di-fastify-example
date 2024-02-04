@@ -1,11 +1,17 @@
 import { FastifyPluginAsync } from 'fastify';
 import UserService from '../services/UserService';
 import { UserEntity } from '../entities';
+import { UserRepository } from '../repositories';
 
 const users: FastifyPluginAsync = async (fastify, _opts): Promise<void> => {
+  const userService = new UserService(new UserRepository());
+
   fastify.get('/users', async function (_request, _reply) {
-    const userService = new UserService();
-    const users = await userService.getUsers();
+    const entities = await userService.getUsers();
+    const users = entities.map((entity) => ({
+      ...entity,
+      password: undefined,
+    }));
 
     return { users };
   });
@@ -23,13 +29,13 @@ const users: FastifyPluginAsync = async (fastify, _opts): Promise<void> => {
       },
     },
     async function (request, reply) {
-      const userService = new UserService();
-      const user = await userService.getUser(request.params.id);
+      const entity = await userService.getUser(request.params.id);
 
-      if (!user) {
+      if (!entity) {
         return reply.status(404).send({ error: 'User not found' });
       }
 
+      const user = { ...entity, password: undefined };
       return { user };
     }
   );
@@ -38,6 +44,7 @@ const users: FastifyPluginAsync = async (fastify, _opts): Promise<void> => {
     Body: {
       name: string;
       email: string;
+      password: string;
     };
   }>(
     '/users',
@@ -45,23 +52,25 @@ const users: FastifyPluginAsync = async (fastify, _opts): Promise<void> => {
       schema: {
         body: {
           type: 'object',
-          required: ['name', 'email'],
+          required: ['name', 'email', 'password'],
           properties: {
             name: { type: 'string' },
             email: { type: 'string' },
+            password: { type: 'string' },
           },
         },
       },
     },
     async function (request, _reply) {
-      const userService = new UserService();
       const userEntity = new UserEntity(
         '',
         request.body.name,
-        request.body.email
+        request.body.email,
+        request.body.password
       );
       const user = await userService.create(userEntity);
 
+      (user as any).password = undefined;
       return { user };
     }
   );
@@ -81,7 +90,6 @@ const users: FastifyPluginAsync = async (fastify, _opts): Promise<void> => {
       },
     },
     async function (request, reply) {
-      const userService = new UserService();
       const user = await userService.getUser(request.params.id);
 
       if (!user) {
@@ -93,6 +101,7 @@ const users: FastifyPluginAsync = async (fastify, _opts): Promise<void> => {
 
       const updatedUser = await userService.update(user);
 
+      (updatedUser as any).password = undefined;
       return { user: updatedUser };
     }
   );

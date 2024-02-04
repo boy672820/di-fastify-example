@@ -6,6 +6,7 @@ type UserProperties = {
   id: string;
   name: string;
   email: string;
+  password: string;
 };
 
 export default class UserRepository implements IUserRepository {
@@ -18,6 +19,21 @@ export default class UserRepository implements IUserRepository {
 
   async findById(id: string): Promise<UserEntity | null> {
     const user = users.find((user) => user.id === id);
+
+    if (!user) {
+      return null;
+    }
+
+    return this.toEntity(user);
+  }
+
+  async findOne(condition: {
+    name?: string;
+    email?: string;
+  }): Promise<UserEntity | null> {
+    const user = users.find(
+      (user) => user.name === condition.name || user.email === condition.email
+    );
 
     if (!user) {
       return null;
@@ -45,11 +61,12 @@ export default class UserRepository implements IUserRepository {
   generateId = (): string => users.length + 1 + '';
 
   private toEntity = (user: UserProperties): UserEntity =>
-    new UserEntity(user.id, user.name, user.email);
+    new UserEntity(user.id, user.name, user.email, user.password);
 
   private toProps = (user: UserEntity): UserProperties => ({
     id: user.id,
     name: user.name,
     email: user.email,
+    password: user.password,
   });
 }
